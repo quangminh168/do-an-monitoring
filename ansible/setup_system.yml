@@ -14,6 +14,13 @@
       path: /tmp/node_exporter.tar.gz
       state: absent
 
+  - name: Stop old node_exporter service
+    systemd:
+      name: node_exporter
+      state: stopped
+      enabled: no
+    ignore_errors: yes
+
   - name: Create node_exporter user
     user:
       name: "{{ node_exporter_user }}"
@@ -64,6 +71,7 @@
   - name: Reload systemd
     command: systemctl daemon-reexec
 
+
   - name: Enable and start node_exporter
     systemd:
       name: node_exporter
@@ -76,3 +84,4 @@
 
   - debug:
       var: service_status.stdout_lines
+
