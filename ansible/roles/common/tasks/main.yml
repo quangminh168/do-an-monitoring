@@ -1,0 +1,11 @@
+- name: Create backup directory
+  file:
+    path: /backup
+    state: directory
+    mode: '0755'
+
+- name: Ensure /usr/local/bin exists
+  file:
+    path: /usr/local/bin
+    state: directory
+    mode: '0755'

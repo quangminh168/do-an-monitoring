@@ -1,0 +1,12 @@
+- name: Copy maintenance script
+  copy:
+    src: maintenance.sh
+    dest: /usr/local/bin/maintenance.sh
+    mode: '0755'
+
+- name: Setup cronjob
+  cron:
+    name: "Daily maintenance"
+    minute: "0"
+    hour: "0"
+    job: "/usr/local/bin/maintenance.sh >> /var/log/maintenance.log 2>&1"
