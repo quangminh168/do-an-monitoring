@@ -4,17 +4,17 @@ groups:
   # 1. Cảnh báo khi một Server bị sập (Down)
   - alert: InstanceDown
     expr: up == 0
-    for: 1m
+    for: 30s
     labels:
       severity: critical
     annotations:
       summary: "Server {{ $labels.instance }} bị sập!"
-      description: "Đã mất kết nối với instance {{ $labels.instance }} trong hơn 1 phút."
+      description: "Đã mất kết nối với instance {{ $labels.instance }} trong hơn 30s."
 
   # 2. Cảnh báo khi ổ cứng đầy (trên 90%)
   - alert: HostOutOfDiskSpace
     expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
-    for: 2m
+    for: 30s
     labels:
       severity: warning
     annotations:
@@ -24,9 +24,9 @@ groups:
   # 3. Cảnh báo khi RAM sử dụng quá cao (trên 95%)
   - alert: HostHighCpuLoad
     expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 95
-    for: 5m
+    for: 30s
     labels:
       severity: warning
     annotations:
       summary: "CPU quá tải trên {{ $labels.instance }}"
-      description: "Sử dụng CPU đang ở mức {{ $value | printf \"%.2f\" }}% trong hơn 5 phút."
+      description: "Sử dụng CPU đang ở mức {{ $value | printf \"%.2f\" }}% trong hơn 30s."
