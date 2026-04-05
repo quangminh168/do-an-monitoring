@@ -14,3 +14,7 @@ alerting:
     - static_configs:
         - targets:
           - 'alertmanager:9093'
+mysql:
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mysql-exporter:9104']
