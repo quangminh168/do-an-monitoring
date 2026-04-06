@@ -33,16 +33,51 @@ services:
     restart: unless-stopped
     ports:
       - "9093:9093"
+
+
   mysql:
     image: mysql:8.0
+    container_name: mysql_db
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password 
+      MYSQL_ROOT_PASSWORD: ${VAULT_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: monitoring_db
+      MYSQL_USER: ${VAULT_MYSQL_USER}
+      MYSQL_PASSWORD: ${VAULT_MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - monitoring
 
   mysql-exporter:
     image: prom/mysqld-exporter
+    container_name: mysql_exporter
     environment:
-      DATA_SOURCE_NAME: "user:password@(mysql:3306)/"
+      DATA_SOURCE_NAME: "${VAULT_MYSQL_USER}:${VAULT_MYSQL_PASSWORD}@(mysql:3306)/"
     ports:
       - "9104:9104"
+    networks:
+      - monitoring
+
+  # --- LOGGING ---
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - monitoring
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - ./promtail/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - monitoring
