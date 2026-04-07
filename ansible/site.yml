@@ -21,3 +21,8 @@
         src: alertmanager/alertmanager.yml
         dest: /etc/alertmanager/alertmanager.yml
         mode: '0644'
+    - name: "Tạo file .env từ Vault"
+      template:
+        src: templates/env.j2
+        dest: /home/quangminh/do-an-monitoring/.env
+        mode: '0600'
