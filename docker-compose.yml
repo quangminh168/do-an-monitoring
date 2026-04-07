@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
   prometheus:
@@ -78,17 +76,20 @@ services:
       - /var/log/mysql:/var/log/mysql  
     networks:
       - monitoring
-
-  mysql-exporter:
+  mysql_exporter:
     image: prom/mysqld-exporter
     container_name: mysql_exporter
-    environment:
-      DATA_SOURCE_NAME: "${VAULT_MYSQL_USER}:${VAULT_MYSQL_PASSWORD}@(mysql:3306)/"
+    volumes:
+      - ./mysql/my-exporter.cnf:/.my.cnf:ro 
+    command:
+      - "--config.my-cnf=/.my.cnf"
+      - "--collect.info_schema.innodb_metrics"
+      - "--collect.info_schema.processlist"
     ports:
       - "9104:9104"
     networks:
       - monitoring
-
+    restart: always
 networks:
   monitoring:
     driver: bridge

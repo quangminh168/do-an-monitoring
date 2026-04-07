@@ -1,0 +1,4 @@
+[client]
+user=db_monitor
+password=123456
+host=mysql_db
