@@ -17,6 +17,12 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+    user: "0"
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards/dash.yml:/etc/grafana/provisioning/dashboards/dashboards/dash.yml
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
     restart: always
     networks:
       - monitoring
