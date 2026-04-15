@@ -1,12 +1,31 @@
-- name: Copy maintenance script
-  copy:
-    src: maintenance.sh
-    dest: /usr/local/bin/maintenance.sh
-    mode: '0755'
+- name: Nạp biến bảo mật từ Vault
+  include_vars:
+    file: "{{ playbook_dir }}/../group_vars/all/vault.yml"
 
-- name: Setup cronjob
+- name: Copy maintenance and hardening scripts
+  template:
+    src: "files/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: '0755'
+  loop:
+    - maintenance.sh
+    - hardening.sh
+
+- name: Setup Daily Maintenance Cronjob (00:00 AM)
   cron:
     name: "Daily maintenance"
     minute: "0"
     hour: "0"
-    job: "/usr/local/bin/maintenance.sh >> /var/log/maintenance.log 2>&1"
+    job: "/usr/local/bin/maintenance.sh"
+
+- name: Setup Hardening/Monitoring Cronjob (Every 5 minutes)
+  cron:
+    name: "Security hardening and service monitor"
+    minute: "*/5"
+    job: "/usr/local/bin/hardening.sh"
+
+
+- name: Install fail2ban
+  apt:
+    name: fail2ban
+    state: present

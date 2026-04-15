@@ -66,7 +66,32 @@
           },
           "unit": "short"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "{filename=\"/var/log/auth.log\", host=\"vm3\", job=\"varlogs\"}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": true,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 6,
@@ -148,7 +173,7 @@
           },
           "direction": "backward",
           "editorMode": "code",
-          "expr": "{job=~\".+\"}",
+          "expr": "{job=\"varlogs\", host=~\"$host\"}",
           "queryType": "range",
           "refId": "A"
         }
@@ -197,16 +222,40 @@
           "value": ""
         },
         "datasource": {
-          "type": "prometheus",
-          "uid": "efid8h2t27s3ke"
+          "type": "loki",
+          "uid": "${DS_LOKI}"
         },
-        "definition": "label_values($job)",
+        "definition": "",
         "name": "job",
         "options": [],
         "query": {
-          "qryType": 1,
-          "query": "label_values($job)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          "label": "job",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "",
+          "type": 1
+        },
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "vm2",
+          "value": "vm2"
+        },
+        "datasource": {
+          "type": "loki",
+          "uid": "${DS_LOKI}"
+        },
+        "definition": "",
+        "name": "host",
+        "options": [],
+        "query": {
+          "label": "host",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "",
+          "type": 1
         },
         "refresh": 1,
         "regex": "",
@@ -235,6 +284,6 @@
   "timezone": "browser",
   "title": "Loki Dashboard",
   "uid": "liz0yRCZz",
-  "version": 6,
+  "version": 1,
   "weekStart": ""
 }

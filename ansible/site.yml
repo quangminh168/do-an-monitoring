@@ -1,8 +1,13 @@
-- hosts: nodes
+- hosts: all
   become: yes
-
+  vars_files:
+    - "../group_vars/all/vault.yml"
   roles:
     - common
+
+- hosts: nodes
+  become: yes
+  roles:
     - maintenance
 
 - hosts: monitoring
@@ -10,18 +15,19 @@
   vars_files:
     - "../group_vars/all/vault.yml"
   tasks:
-    - name: Tạo thư mục cấu hình Alertmanager trên server
+    - name: Tạo thư mục cấu hình Alertmanager
       file:
         path: /etc/alertmanager
         state: directory
         mode: '0755'
 
-    - name: Copy và giải mã file cấu hình Alertmanager
+    - name: Cấu hình Alertmanager
       template:
         src: alertmanager/alertmanager.yml
         dest: /etc/alertmanager/alertmanager.yml
         mode: '0644'
-    - name: "Tạo file .env từ Vault"
+
+    - name: Tạo file .env cho Docker Compose (nếu cần)
       template:
         src: templates/env.j2
         dest: /home/quangminh/do-an-monitoring/.env
